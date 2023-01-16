@@ -1,0 +1,8 @@
+fastapi
+pandas
+numpy
+datetime
+nltk
+praw
+uvicorn
+pydantic
