@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import pandas as pd
 import numpy as np
+from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -18,9 +19,9 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.tokenize import word_tokenize, RegexpTokenizer # tokenize words
 from nltk.corpus import stopwords
 
-#nltk.download('vader_lexicon') # get lexicons data
-#nltk.download('punkt') # for tokenizer
-#nltk.download('stopwords')
+nltk.download('vader_lexicon') # get lexicons data
+nltk.download('punkt') # for tokenizer
+nltk.download('stopwords')
 
 class Graph(BaseModel):
     subreddit: str
@@ -33,21 +34,29 @@ reddit = praw.Reddit(
     username="aaronbalzac",
 )
 
-app= FastAPI()
+
 
 origins = [
-    "http://127.0.0.1:3000",
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:3000",
+    "https://shimmering-scone-efc645.netlify.app",
+    "https://shimmering-scone-efc645.netlify.app:8000",
+    "https://okanalyst.com",
 ]
 
-app.add_middleware(
+middleware = [
+    Middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-)
+    )
+]
 
-
+app= FastAPI(middleware=middleware)
 
 @app.post('/wordcloud')
 def wordcloud(graph:Graph):
